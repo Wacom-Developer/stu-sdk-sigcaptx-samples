@@ -1,0 +1,63 @@
+<!doctype html>
+<html>
+<head>
+  <title>Port Check</title>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <script src="q.js" charset="UTF-8"></script>
+  <script src="wgssStuSdk.js" charset="UTF-8"></script>
+  <script type="text/javascript">
+    
+  function print(txt) {
+    var txtDisplay = document.getElementById("txtDisplay");
+    txtDisplay.value += txt + "\n";
+    txtDisplay.scrollTop = txtDisplay.scrollHeight; // scroll to end
+  }
+  var retry = 0;
+  function checkArbitratorConnection() {
+    // Establishing a connection to SigCaptX Web Service can take a few seconds, 
+    // particularly if the browser itself is still loading/initialising 
+    // or on a slower machine. 
+    retry = retry + 1;
+    if(WacomGSS.STU.isServiceReady()) {
+      retry = 0;
+      print("SigCaptX Web Service: ready");
+      WacomGSS.STU.isDCAReady()
+      .then( function(message) {
+        print(message? "SigCaptX DCA: ready" : "SigCaptX DCA: not detected");
+      });
+    } else {
+      print("SigCaptX Web Service: not connected");
+      if(retry < 20) {
+        setTimeout(checkArbitratorConnection, 1000);
+      }
+    }
+  }
+  
+  function onLoad()
+  {
+     setTimeout(checkArbitratorConnection, 500);
+  }
+    
+  function portCheck() {
+    port = document.getElementById("portText").value;
+    WacomGSS.STU = new WacomGSS.STUConstructor(port);
+    setTimeout(checkArbitratorConnection, 250);
+  }
+    
+  window.addEventListener("beforeunload", function (e) {
+    var confirmationMessage = "";
+    WacomGSS.STU.close();
+    (e || window.event).returnValue = confirmationMessage; // Gecko + IE
+    return confirmationMessage;                            // Webkit, Safari, Chrome
+  });
+  </script>
+</head>
+<body onload="onLoad()">
+  <h1>SigCaptX STU Port Check</h1><br/>
+  Service port: <input type="text" id="portText" value="9000">
+  <input type="button" id="btnCheck" value="Check Service" style="width:35mm" onClick="portCheck()" title="Detects SigCaptX" /><br/>
+    <br/>
+    <textarea cols="125" rows="15" id="txtDisplay"></textarea>
+    <pre id="file-content"></pre>
+  </body>
+</html>
