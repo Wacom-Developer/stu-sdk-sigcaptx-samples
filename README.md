@@ -1,4 +1,4 @@
-# Wacom Ink Connectivity - STU SDK SigCaptX
+# Wacom Device Kit - STU SDK SigCaptX
 
 ## Introduction
 
