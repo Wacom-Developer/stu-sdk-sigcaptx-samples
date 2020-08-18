@@ -48,14 +48,14 @@ The general process is as follows:
 For further samples check Wacom's Developer additional samples, see [https://github.com/Wacom-Developer](https://github.com/Wacom-Developer)
 
 ## Documentation
-For further details on using the SDK see [Wacom Device Kit - STU SDK](http://will-docs.westeurope.cloudapp.azure.com/) 
+For further details on using the SDK see [Wacom Device Kit - STU SDK](http://developer-docs.wacom.com/) 
 
 The API Reference is available directly in the downloaded SDK.
 
 ## Support
-If you experience issues with the technology components, please see related [FAQs](http://will-docs.westeurope.cloudapp.azure.com/faqs)
+If you experience issues with the technology components, please see related [FAQs](http://developer-docs.wacom.com/faqs)
 
-For further support file a ticket in our **Developer Support Portal** described here: [Request Support](http://will-docs.westeurope.cloudapp.azure.com/faqs/docs/q-support/support)
+For further support file a ticket in our **Developer Support Portal** described here: [Request Support](http://developer-docs.wacom.com/faqs/docs/q-support/support)
 
 ## Developer Community 
 Join our developer community:
