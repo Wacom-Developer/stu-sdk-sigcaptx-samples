@@ -37,7 +37,7 @@ The web server consists of four significant parts:
 
 #### Web Service
 
-wgssSTU_Arbitrator.exe is installed as a Windows service and provides an arbitration service and proxy server.
+wgssSTI_Service.exe is installed as a Windows service and provides an arbitration service and proxy server.
 
 At startup it reads a configuration value and attaches to the specified localhost port.
 By default the service is attached to port 9000.
@@ -46,7 +46,7 @@ The web service arbitrates between different instances of the Device Control App
 
 #### Device Control Application (DCA)
 
-WgssSTU_DeviceCtl.exe is the DCA application which performs the STU API calls. 
+wgssSTU_Server.exe is the DCA application which performs the STU API calls. 
 It is installed so that it starts automatically when a user logs in to Windows. 
 It makes direct calls to the STU SDK dll: wgssSTU.dll (i.e. the COM interface is not used).
 
@@ -67,21 +67,22 @@ The certificate can be viewed in the Windows Certificate Manager as:
 #### Configuration
 
 During installation registry values are created in:
+
 ```
-[HKEY_LOCAL_MACHINE\SOFTWARE\Wacom\SigCaptXSTU]
+[HKLM\SOFTWARE\Wacom\SigCaptXSTU]
 ```
 
-or for a 32-bit server on 64-bit Windows:
-```
-[HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\Wacom\SigCaptXSTU]
-```
+This value is identical for both 32-bit and 64-bit Windows:
 
 The values are generally reserved for internal use but the following value is used to define the web service start port:
+
 ```
-Port	REG_DWORD	0x00002328 (9000)
+ServicePort	REG_DWORD	0x00002328 (9000)
 ```
 
-If a web service port other than 9000 should be used it can be defined here.
+If a web service port other than 9000 should be used it can be defined here. 
+
+Additional information can be read [here](https://developer-docs.wacom.com/stu/docs/sigcaptx-guide).
 
 ---
 

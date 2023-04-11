@@ -23,8 +23,8 @@ The general process is as follows:
 
 ### SigCaptX method summary
 
-In a browser with no ActiveX support it is not possible to access the STU DLL directly. 
-Instead calls are made indirectly via a local web server which communicates with the separate device control application (DCA). 
+In a browser with no ActiveX support, it is not possible to access the STU DLL directly. 
+Instead, calls are made indirectly via a local web server which communicates with the separate device control application (DCA). 
 A JavaScript SDK framework is provided to replicate the STU SDK API.
 
 To view the solution schematically:
@@ -38,7 +38,7 @@ The general process is as follows:
 * 	The framework returns immediately and queues an application callback function for the result of the call.
 * 	The framework passes the call to the web server using a WebSocket connection.
 * 	The web server passes the call to the Device Control Application (DCA) where the STU SDK call is made.
-* 	On completion the web server starts a queued callback function to return the relevant data.
+* 	On completion, the web server starts a queued callback function to return the relevant data.
 
 ---
 
@@ -53,9 +53,9 @@ For further details on using the SDK see [Wacom Device Kit - STU SDK](http://dev
 The API Reference is available directly in the downloaded SDK.
 
 ## Support
-If you experience issues with the technology components, please see related [FAQs](http://developer-docs.wacom.com/faqs)
+If you experience issues with the technology components, please see the related [FAQs](https://developer-support.wacom.com/hc/en-us)
 
-For further support file a ticket in our **Developer Support Portal** described here: [Request Support](http://developer-docs.wacom.com/faqs/docs/q-support/support)
+For further support file a ticket in our **Developer Support Portal** described here: [Request Support](https://developer-support.wacom.com/hc/en-us/requests/new)
 
 ## Developer Community 
 Join our developer community:
