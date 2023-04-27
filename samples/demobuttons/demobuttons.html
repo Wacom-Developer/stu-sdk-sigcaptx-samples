@@ -389,17 +389,17 @@
 
         var penData = function (report) {
           //console.log("report: " + JSON.stringify(report));
-          m_penData.push(report);
           processButtons(report, canvas);
           processPoint(report, canvas, ctx);
+          m_penData.push(report);
         }
         var penDataEncryptedOption = function (report) {
           //console.log("reportOp: " + JSON.stringify(report));
-          m_penData.push(report.penData[0], report.penData[1]);
           processButtons(report.penData[0], canvas);
           processPoint(report.penData[0], canvas, ctx);
           processButtons(report.penData[1], canvas);
           processPoint(report.penData[1], canvas, ctx);
+          m_penData.push(report.penData[0], report.penData[1]);
         }
 
         var log = function (report) {

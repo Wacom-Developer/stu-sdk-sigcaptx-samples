@@ -78,6 +78,9 @@
     .then(function(message) {
       print("UID2: " + message);
       return tablet.getProductId();
+    },function(message) {
+      print("UID2: " + message);
+      return tablet.getProductId();
     })
     .then(function(message) {
       pId = message;
