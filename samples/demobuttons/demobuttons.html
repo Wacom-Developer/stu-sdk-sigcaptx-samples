@@ -1,35 +1,48 @@
+<!--
+/* ************************************************************************** */
+  demobuttons.html
+   
+  STU SigCaptX sample code illustrating signature capture from STU devices only
+  
+  Copyright (c) 2023 Wacom Co. Ltd. All rights reserved.
+   
+/* ************************************************************************** */
+-->
 <!doctype html>
 <html>
 <head>
   <link rel="stylesheet" type="text/css" href="demoButtons.css" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <script type="text/javascript" src="BigInt.js"></script>
-  <script type="text/javascript" src="sjcl.js"></script> <!-- copied from Stanford Javascript Crypto Library (SJCL) -->
-  <script type="text/javascript" src="demobuttons_encryption.js"></script>
   <script src="q.js" charset="UTF-8"></script>
   <script src="wgssStuSdk.js" charset="UTF-8"></script>
   <script>
-
+  
+    var BTN_TEXT_CANCEL = "Cancel";
+    var BTN_TEXT_CLEAR = "Clear";
+    var BTN_TEXT_OK = "OK";
+    var MAXRETRIES = 20;
+    var TIMEOUT_LONG = 1000;
+    var TIMEOUT_SHORT = 500;
+    
+    var canvas;
+    var ctx;
+    var formDiv;
+    var intf;
+    var isDown;
+    var lastPoint;
     var m_btns; // The array of buttons that we are emulating.
     var m_clickBtn = -1;
-    var intf;
-    var formDiv;
-    var protocol;
-    var m_usbDevices;
-    var tablet;
     var m_capability;
-    var m_inkThreshold;
-    var m_imgData;
     var m_encodingMode;
-    var ctx;
-    var canvas;
-    var modalBackground;
-    var formDiv;
+    var m_imgData;
+    var m_inkThreshold;
     var m_penData;
-    var lastPoint;
-    var isDown;
-
+    var m_usbDevices;
+    var modalBackground;
+    var protocol;
     var retry = 0;
+    var tablet;
+
     function checkForSigCaptX() {
       // Establishing a connection to SigCaptX Web Service can take a few seconds,
       // particularly if the browser itself is still loading/initialising
@@ -40,8 +53,8 @@
         console.log("SigCaptX Web Service: ready");
       } else {
         console.log("SigCaptX Web Service: not connected");
-        if (retry < 20) {
-          setTimeout(checkForSigCaptX, 1000);
+        if (retry < MAXRETRIES) {
+          setTimeout(checkForSigCaptX, TIMEOUT_LONG);
         }
         else {
           alert("Unable to establish connection to SigCaptX");
@@ -50,11 +63,11 @@
 
     }
 
-    setTimeout(checkForSigCaptX, 500);
+    setTimeout(checkForSigCaptX, TIMEOUT_SHORT);
 
     function onDCAtimeout() {
       // Device Control App has timed-out and shut down
-      // For this sample, we just closedown tabletDemo (assumking it's running)
+      // For this sample, we just closedown tabletDemo (assuming it's running)
       console.log("DCA disconnected");
       setTimeout(close, 0);
     }
@@ -90,7 +103,7 @@
     }
 
 
-    function createModalWindow(width, height) {
+    function createModalWindow(width, height) {  //  Creates the modal window on the PC monitor
       modalBackground = document.createElement('div');
       modalBackground.id = "modal-background";
       modalBackground.className = "active";
@@ -125,6 +138,7 @@
 
     function disconnect() {
       var deferred = Q.defer();
+      
       if (!(undefined === tablet || null === tablet)) {
         var p = new WacomGSS.STU.Protocol();
         tablet.setInkingMode(p.InkingMode.InkingMode_Off)
@@ -153,7 +167,6 @@
           .then(function (message) {
             console.log("received: " + JSON.stringify(message));
             tablet = null;
-            // clear canvas
             clearCanvas(canvas, ctx);
           })
           .then(function (message) {
@@ -183,7 +196,6 @@
     function tabletDemo() {
       var p = new WacomGSS.STU.Protocol();
       var intf;
-      var m_usingEncryption = false;
       var m_encH;
       var m_encH2;
       var m_encH2Impl;
@@ -214,20 +226,6 @@
       .then(function (message) {
         console.log("received: " + JSON.stringify(message));
         return intf.connect(m_usbDevices[0], true);
-      })
-      .then(function (message) {
-        console.log("received: " + JSON.stringify(message));
-        console.log(0 == message.value ? "connected!" : "not connected");
-        if (0 == message.value) {
-          m_encH = new WacomGSS.STU.EncryptionHandler(new encryptionHandler());
-          return m_encH.Constructor();
-        }
-      })
-      .then(function (message) {
-        console.log("received: " + JSON.stringify(message));
-        m_encH2Impl = new encryptionHandler2();
-        m_encH2 = new WacomGSS.STU.EncryptionHandler2(m_encH2Impl);
-        return m_encH2.Constructor();
       })
       .then(function (message) {
         console.log("received: " + JSON.stringify(message));
@@ -280,40 +278,10 @@
         }
       })
       .then(function (message) {
-        console.log("received: " + JSON.stringify(message));
-        return tablet.isSupported(p.ReportId.ReportId_EncryptionStatus); // v2 encryption
-      })
-      .then(function (message) {
-        console.log("received: " + JSON.stringify(message));
-        m_usingEncryption = message;
-        // if the encryption script is missing turn off encryption regardless
-        if (typeof window.sjcl == 'undefined') {
-          console.log("sjcl not found - encryption disabled");
-          m_usingEncryption = false;
-        }
-        return tablet.getDHprime();
-      })
-      .then(function (dhPrime) {
-        console.log("received: " + JSON.stringify(dhPrime));
-        return WacomGSS.STU.ProtocolHelper.supportsEncryption_DHprime(dhPrime); // v1 encryption
-      })
-      .then(function (message) {
-        console.log("received: " + JSON.stringify(message));
-        m_usingEncryption = (message ? true : m_usingEncryption);
         return tablet.setClearScreen();
       })
       .then(function (message) {
-        if (m_usingEncryption) {
-          return tablet.startCapture(0xc0ffee);
-        }
-        else {
-          return message;
-        }
-      })
-      .then(function (message) {
-        if (typeof m_encH2Impl.error !== 'undefined') {
-          throw new Error("Encryption failed, restarting demo");
-        }
+        console.log("received from setClearScreen: " + JSON.stringify(message));
         return message;
       })
       .then(function (message) {
@@ -332,6 +300,7 @@
                   break;
                 case WacomGSS.STU.ProductId.ProductId_430:
                 case WacomGSS.STU.ProductId.ProductId_530:
+                case WacomGSS.STU.ProductId.ProductId_540:
                   penDataOptionMode = p.PenDataOptionMode.PenDataOptionMode_TimeCountSequence;
                   break;
                 default:
@@ -369,12 +338,6 @@
         m_imgData = message;
         console.log("received: " + JSON.stringify(message));
         return tablet.writeImage(m_encodingMode, message);
-      })
-      .then(function (message) {
-        if (m_encH2Impl.error) {
-          throw new Error("Encryption failed, restarting demo");
-        }
-        return message;
       })
       .then(function (message) {
         console.log("received: " + JSON.stringify(message));
@@ -428,7 +391,7 @@
           // Device Control App not detected 
           // Reinitialize and re-try
           WacomGSS.STU.Reinitialize();
-          setTimeout(tabletDemo, 1000);
+          setTimeout(tabletDemo, TIMEOUT_LONG);
         }
         else {
           // Some other error - Inform the user and closedown 
@@ -471,9 +434,9 @@
         m_btns[2].Bounds = new Rectangle(x, h1 + h2, w, h3);
       }
 
-      m_btns[0].Text = "OK";
-      m_btns[1].Text = "Clear";
-      m_btns[2].Text = "Cancel";
+      m_btns[0].Text = BTN_TEXT_OK;
+      m_btns[1].Text = BTN_TEXT_CLEAR;
+      m_btns[2].Text = BTN_TEXT_CANCEL;
       m_btns[0].Click = btnOk_Click;
       m_btns[1].Click = btnClear_Click;
       m_btns[2].Click = btnCancel_Click;
@@ -603,6 +566,7 @@
     }
 
     function generateImage() {
+    
       signatureImage = document.getElementById("signatureImage");
       var signatureCanvas = document.createElement("canvas");
       signatureCanvas.id = "signatureCanvas";
@@ -615,6 +579,7 @@
       signatureCtx.strokeStyle = 'black';
       lastPoint = { "x": 0, "y": 0 };
       isDown = false;
+      
       for (var i = 0; i < m_penData.length; i++) {
         processPoint(m_penData[i], signatureCanvas, signatureCtx);
       }
