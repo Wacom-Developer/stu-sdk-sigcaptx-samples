@@ -4,6 +4,9 @@
 
 ## History
 
+###  Release v1.5.1 28-Apr-2023
+    * Reworked so the user process is started by the service
+
 ###  Release v1.4.6  12-Jul-2019
     * Rebuild Mozilla NSS tools with current source to counteract false positives in some AV engines
 	
