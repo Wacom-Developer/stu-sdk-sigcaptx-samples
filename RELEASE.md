@@ -1,8 +1,13 @@
 # STU SDK SigCaptX
 
-## Version 1.4.6
+## Version 1.6.0
 
 ## History
+
+###  Release v1.6.0 31-May-2023
+    * Fix for connection termination
+    * Added error check in sample code for unsupported functions
+    * Added openssl3 compatibility
 
 ###  Release v1.5.1 28-Apr-2023
     * Reworked so the user process is started by the service
